@@ -11,10 +11,12 @@ curl -sL http://github.com/mitchellh/vagrant/raw/master/keys/vagrant.pub > \
 chmod 600 /export/home/vagrant/.ssh/authorized_keys
 chown -R vagrant:staff /export/home/vagrant/.ssh
 
+echo "Disabling sendmail and asr-norify"
 # disable the very annoying sendmail
 /usr/sbin/svcadm disable sendmail
 /usr/sbin/svcadm disable asr-notify
 
+echo "Clearing log files and zeroing disk, while take a while"
 cp /dev/null /var/adm/messages
 cp /dev/null /var/log/syslog
 cp /dev/null /var/adm/wtmpx
