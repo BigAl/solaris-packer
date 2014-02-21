@@ -1,0 +1,156 @@
+{
+  "builders": [
+    {
+      "boot_command": [
+        "<enter><wait10><wait5>",
+        "1<enter><wait10>",
+        "<wait10>",
+        "<f2><wait>",
+        "<f2><wait>",
+        "<f2><wait>",
+        "<bs><bs><bs><bs><bs><bs><bs>omnios-vagrant",
+        "<f2><wait>",
+        "<tab><tab><tab><tab><tab><tab><tab>",
+        "<f2><wait>",
+        "<f2><wait>",
+        "<tab><tab><tab>",
+        "<f2><wait>",
+        "<f2><wait>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<f8><wait>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "root<enter><wait><enter><wait5>",
+        "passwd<enter><wait>",
+        "vagrant<enter><wait>",
+        "vagrant<enter><wait>",
+        "svcadm disable ssh<enter><wait>",
+        "ipadm create-if e1000g0<enter><wait>",
+        "ipadm create-addr -T dhcp e1000g0/v4<enter><wait>",
+        "useradd -m -k /etc/skel/ -b /export/home -s /usr/bin/bash vagrant<enter><wait><wait>",
+        "passwd vagrant<enter><wait>",
+        "vagrant<enter><wait>",
+        "vagrant<enter><wait>",
+        "echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers<enter><wait>",
+        "svcadm enable ssh<enter><wait>"
+      ],
+      "boot_wait": "30s",
+      "disk_size": 8192,
+      "guest_os_type": "OpenSolaris_64",
+      "iso_checksum": "9929337d9c9f9e33862f19f41c2777225fa14a03",
+      "iso_checksum_type": "sha1",
+      "iso_url": "http://omnios.omniti.com/media/OmniOS_Text_r151008j.iso",
+      "output_directory": "packer-omnios-r151008j-virtualbox",
+      "shutdown_command": "sudo /usr/sbin/init 5",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_username": "vagrant",
+      "type": "virtualbox-iso",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "1024"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "1"
+        ]
+      ],
+      "virtualbox_version_file": ".vbox_version",
+      "vm_name": "packer-omnios-r151008f"
+    },
+    {
+      "boot_command": [
+        "<enter><wait10><wait5>",
+        "1<enter><wait10>",
+        "<wait10>",
+        "<f2><wait>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<f2><wait>",
+        "<f2><wait>",
+        "<bs><bs><bs><bs><bs><bs><bs>omnios-vagrant",
+        "<f2><wait>",
+        "<tab><tab><tab><tab><tab><tab><tab>",
+        "<f2><wait>",
+        "<f2><wait>",
+        "<tab><tab><tab>",
+        "<f2><wait>",
+        "<f2><wait>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<f8><wait>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "root<enter><wait><enter><wait5>",
+        "passwd<enter><wait>",
+        "vagrant<enter><wait>",
+        "vagrant<enter><wait>",
+        "svcadm disable ssh<enter><wait>",
+        "ipadm create-if e1000g0<enter><wait>",
+        "ipadm create-addr -T dhcp e1000g0/v4<enter><wait>",
+        "useradd -m -k /etc/skel/ -b /export/home -s /usr/bin/bash vagrant<enter><wait10>",
+        "passwd vagrant<enter><wait>",
+        "vagrant<enter><wait>",
+        "vagrant<enter><wait>",
+        "echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers<enter><wait>",
+        "svcadm enable ssh<enter><wait>"
+      ],
+      "boot_wait": "30s",
+      "disk_size": 8192,
+      "floppy_files": [
+        "./scripts/omnios/Omni.flp"
+      ],
+      "guest_os_type": "solaris11-64",
+      "iso_checksum": "9929337d9c9f9e33862f19f41c2777225fa14a03",
+      "iso_checksum_type": "sha1",
+      "iso_url": "http://omnios.omniti.com/media/OmniOS_Text_r151008j.iso",
+      "output_directory": "packer-omnios-r151008f-vmware",
+      "shutdown_command": "sudo /usr/sbin/init 5",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_username": "vagrant",
+      "tools_upload_flavor": "solaris",
+      "type": "vmware-iso",
+      "vm_name": "packer-omnios-r151008j",
+      "vmx_data": {
+        "cpuid.coresPerSocket": "1",
+        "memsize": "1024",
+        "numvcpus": "1"
+      }
+    }
+  ],
+  "post-processors": [
+    {
+      "compression_level": 9,
+      "output": "./builds/{{.Provider}}/omnios-r151008j.box",
+      "type": "vagrant"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "./scripts/omnios/eventhook",
+      "destination": "/tmp/eventhook"
+    },
+    {
+     "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+      "scripts": [
+        "scripts/solaris/vmtools.sh",
+        "scripts/omnios/postinstall.sh"
+      ],
+      "type": "shell"
+    }
+  ]
+}

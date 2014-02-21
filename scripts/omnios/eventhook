@@ -1,0 +1,55 @@
+#!/bin/ksh
+#
+
+PATH=/sbin:/usr/sbin:/usr/bin
+LOG=/var/log/dhcp-eventhook.log
+INTERFACE=$1
+ACTION=$2
+eventhook_comment="# Added by /etc/dhcp/eventhook"
+
+echo "`date`:$@" >> $LOG
+
+if [ "$ACTION" == "BOUND" -o "$ACTION" == "EXTEND" ]; then
+
+        echo $eventhook_comment >> /tmp/resolv.conf.$$
+        domain=`dhcpinfo -i $INTERFACE DNSdmain`
+        echo "DNS domain : $domain" >> $LOG
+        if [ ! -z "$domain" ]; then
+                echo "domain $domain" >> /tmp/resolv.conf.$$
+        fi
+        dnsserv=`dhcpinfo -i $INTERFACE DNSserv`
+        echo "DNS servers : $dnsserv">> $LOG
+        if [ ! -z "$dnsserv" ]; then
+                echo "nameserver $dnsserv" >>  /tmp/resolv.conf.$$
+        fi
+        mv /tmp/resolv.conf.$$ /etc/resolv.conf
+        chmod 644 /etc/resolv.conf
+        cp /etc/nsswitch.dns /etc/nsswitch.conf
+
+        nis_domainname=`dhcpinfo -i $INTERFACE NISdmain`
+
+        [ -z "$nis_domainname" ] && exit 0
+
+        echo $nis_domainname > /etc/defaultdomain
+        svcadm restart svc:/system/identity:domain
+
+#       Temporarily enable NIS
+        svcadm enable -t svc:/network/nis/client:default
+        svcadm enable -t svc:/network/dns/client:default
+        svcadm restart svc:/system/name-service-cache:default
+
+elif [ "$ACTION" == "DROP" -o "$ACTION" == "RELEASE" ]; then
+        rm /etc/resolv.conf
+        if [ -r /etc/resolv.conf-pre-eventhook ]; then
+                echo "Restoring pre-eventhook resolv.conf" >> $LOG
+                mv /etc/resolv.conf-pre-eventhook /etc/resolv.conf
+        fi
+        rm -f /var/yp/binding/$dh_domainname/ypservers
+        rm -f /etc/defaultdomain
+        svcadm restart svc:/system/identity:domain
+        svcadm disable svc:/network/dns/client:default
+        svcadm disable svc:/network/nis/client:default
+        cp /etc/nsswitch.files /etc/nsswitch.conf
+        # Avoid the pesky caching of previous stuff
+        rm /etc/dhcp/${INTERFACE}.dhc
+fi
