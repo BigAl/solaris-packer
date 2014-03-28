@@ -14,8 +14,6 @@ Requires
 To use these files
 =============
 
-    git clone git://github.com/AlanC-au/packer
-    mkdir -p builds/virtualbox
-    mkdir -p builds/vmware
+    git clone git://github.com/AlanC-au/solaris-packer
     packer build -only=virtualbox-iso solaris11.json
     packer build -only=vmware-iso solaris11.json
