@@ -10,6 +10,7 @@ Requires
 - Vargrant (1.4.3)
 - Packer (0.5.1)
 - Solaris 11_1 text installer
+- Solaris 10 Update 11 DVD image
 
 To use these files
 =============
