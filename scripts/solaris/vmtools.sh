@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ $PACKER_BUILDER_TYPE == 'virtualbox-iso' ]; then
+if [ $PACKER_BUILDER_TYPE = 'virtualbox-iso' ]; then
   echo "Installing VirtualBox Guest Additions"
   echo "mail=\ninstance=overwrite\npartial=quit" > /tmp/noask.admin
   echo "runlevel=nocheck\nidepend=quit\nrdepend=quit" >> /tmp/noask.admin
@@ -14,13 +14,14 @@ if [ $PACKER_BUILDER_TYPE == 'virtualbox-iso' ]; then
   rm -f VBoxGuestAdditions.iso
 fi
 
-if [ $PACKER_BUILDER_TYPE == 'vmware-iso' ]; then
+if [ $PACKER_BUILDER_TYPE = 'vmware-iso' ]; then
   DEV=`/usr/sbin/lofiadm -a /export/home/vagrant/solaris.iso`
-  /usr/sbin/mount -o ro -F hsfs $DEV /mnt
+  mkdir /mnt2
+  /usr/sbin/mount -o ro -F hsfs $DEV /mnt2
   mkdir /tmp/vmfusion-archive
-  tar zxvf /mnt/vmware-solaris-tools.tar.gz -C /tmp/vmfusion-archive
+  gunzip -c /mnt2/vmware-solaris-tools.tar.gz | (cd /tmp/vmfusion-archive ; tar xvf -)
   /tmp/vmfusion-archive/vmware-tools-distrib/vmware-install.pl --default
-  /usr/sbin/umount /mnt
+  /usr/sbin/umount /mnt2
   /usr/sbin/lofiadm -d $DEV
   rm -rf /tmp/vmfusion-archive
   rm -f solaris.iso
