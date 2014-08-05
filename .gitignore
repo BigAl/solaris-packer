@@ -1,0 +1,4 @@
+*.iso
+*.box
+packer_cache
+packer.log
