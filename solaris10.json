@@ -1,6 +1,7 @@
 {
   "builders": [
     {
+      "headless": true,
       "boot_command": [
         "<enter><wait10><wait10><wait10>",
         "4",
