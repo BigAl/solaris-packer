@@ -7,7 +7,7 @@ See Blogpost http://www.resilvered.com/2014/02/solaris-vagrant-packer-and-base-b
 
 Requires
 -------
-- Vargrant (1.5.1)
+- Vagrant (1.5.1)
 - Packer (0.6.0)
 - Solaris 11_1 text installer
 - Solaris 11_2 text installer
